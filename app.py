@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import requests
 import requests
 import csv
+import mplcursors
+import streamlit as st
 
 def get_forbrugerprisindeks(start_year, end_year = 2024):
-    if start_year > end_year:
-        exit()
     url = "https://api.statbank.dk/v1/data/"
 
     # No data for 2025 yet.
@@ -50,25 +50,37 @@ def calculate_pay(start_pay, forbrugerprisindeks):
     rounded = [round(x) for x in updated_pay]
     return rounded
 
+def display(years,start_pay,actual_pay,expected_pay):
+    plt.plot(years, expected_pay, label="Forventet Løn (Inflation)", linestyle="--", color="blue")
+    plt.plot([2014, 2024], [start_pay, actual_pay], label="Faktisk Løn", color="green", marker='o')
 
-if __name__ == "__main__":
-    start_year = 2010
-    end_year = 2024
-    forbrugerprisindeks = get_forbrugerprisindeks(start_year,end_year)
-    start_pay = 40_000
-    updated_pay = calculate_pay(start_pay,forbrugerprisindeks)
-    years = [start_year+i for i in range((end_year - start_year)+1)]
-
-    plt.plot(years,updated_pay)
     plt.margins(x=0, y=0)
     plt.xticks(years,rotation = 45)
-
+    plt.legend()
     plt.xlabel("Årstal")
-    plt.ylabel("Månedsløn justeret ift. inflation")
+    plt.ylabel("Månedsløn")
+    
+    cursor = mplcursors.cursor(hover=False)
+    cursor.connect("add", lambda sel: sel.annotation.set_text(f"{int(sel.target[0])} - {sel.target[1]:,.0f} kr."))
+    st.pyplot(plt)
 
-    plt.show()
-    print(forbrugerprisindeks) 
-    print(updated_pay)
 
+if __name__ == "__main__":
+    #NO DATA VALIDATION, WE ARE FREAKS
+    st.title("Lønjustering ift. Inflation")
+    start_year = st.number_input("Indtast startår", min_value=1900, max_value=2025, value=2014)
+    start_pay = st.number_input("Indtast din startløn", min_value=0, value=30000)
+    end_year = st.number_input("Indtast aktuelt år", min_value=1900, max_value=2025, value=2024)
+    end_pay = st.number_input("Indtast aktuel løn", min_value=0, value=30000)
+    forbrugerprisindeks = get_forbrugerprisindeks(start_year,end_year)
+    expected_pay = calculate_pay(start_pay,forbrugerprisindeks)
+    years = [start_year+i for i in range((end_year - start_year)+1)]
 
+    #display(years,start_pay,actual_end_pay,expected_pay)
+    
+    if st.button("Beregn"):
+        burde_loen = expected_pay[-1]
+        st.write(f"Din løn burde være {burde_loen:,.2f} kr. i {end_year}. Din aktuelle løn er {abs(burde_loen - end_pay):,.2f} kr. for {'høj' if end_pay > burde_loen else 'lav'} ift. inflation.")
+
+        display(years,start_pay,end_pay,expected_pay)
 

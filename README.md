@@ -1,6 +1,7 @@
 # Løn Beregner App
 
 Dette er en Python-app, der beregner, hvad din løn "burde" være i forhold til inflation.
+Man bliver "snydt" for nogle måneder, da den bruger forbrugerprisindeks'er for December, så hvis man f.eks. bliver ansat i februar, regner den ikke inflationen for februar-december det år. 
 
 ## Installation
 

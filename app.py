@@ -66,21 +66,23 @@ def display(years,start_pay,actual_pay,expected_pay):
 
 
 if __name__ == "__main__":
-    #NO DATA VALIDATION, WE ARE FREAKS
     st.title("Lønjustering ift. Inflation")
-    start_year = st.number_input("Indtast startår", min_value=1900, max_value=2025, value=2014)
+    start_year = st.number_input("Indtast startår", min_value=1980, max_value=2024, value=2014)
     start_pay = st.number_input("Indtast din startløn", min_value=0, value=30000)
-    end_year = st.number_input("Indtast aktuelt år", min_value=1900, max_value=2025, value=2024)
+    end_year = st.number_input("Indtast aktuelt år", min_value=1980, max_value=2024, value=2024)
     end_pay = st.number_input("Indtast aktuel løn", min_value=0, value=30000)
-    forbrugerprisindeks = get_forbrugerprisindeks(start_year,end_year)
-    expected_pay = calculate_pay(start_pay,forbrugerprisindeks)
+    
     years = [start_year+i for i in range((end_year - start_year)+1)]
 
     #display(years,start_pay,actual_end_pay,expected_pay)
-    
-    if st.button("Beregn"):
-        burde_loen = expected_pay[-1]
-        st.write(f"Din løn burde være {burde_loen:,.2f} kr. i {end_year}. Din aktuelle løn er {abs(burde_loen - end_pay):,.2f} kr. for {'høj' if end_pay > burde_loen else 'lav'} ift. inflation.")
+    if start_year >= end_year:
+        st.error("Startåret skal være mindre end det aktuelle år!")
+    else:
+        if st.button("Beregn"):
+            forbrugerprisindeks = get_forbrugerprisindeks(start_year,end_year)
+            expected_pay = calculate_pay(start_pay,forbrugerprisindeks)
+            burde_loen = expected_pay[-1]
+            st.write(f"Din løn burde være {burde_loen:,.2f} kr. i {end_year}. Din aktuelle løn er {abs(burde_loen - end_pay):,.2f} kr. for {'høj' if end_pay > burde_loen else 'lav'} ift. inflation.")
 
-        display(years,start_pay,end_pay,expected_pay)
+            display(years,start_pay,end_pay,expected_pay)
 

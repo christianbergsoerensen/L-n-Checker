@@ -57,7 +57,7 @@ def calculate_pay(start_pay,forbrugerprisindeks):
 
 def display(years,start_pay,actual_pay,expected_pay):
     plt.plot(years, expected_pay, label="Forventet Løn (Inflation)", linestyle="--", color="blue")
-    plt.plot([2014, 2024], [start_pay, actual_pay], label="Faktisk Løn", color="green", marker='o')
+    plt.plot([years[0], years[-1]], [start_pay, actual_pay], label="Faktisk Løn", color="green", marker='o')
     print(years,expected_pay)
     plt.margins(x=0, y=0)
     #plt.xticks(years,rotation = 45)

@@ -1,7 +1,7 @@
 # Løn Beregner App
 
 Dette er en Python-app, der beregner, hvad din løn "burde" være i forhold til inflation.
-
+Burde nok bare gemme filerne fra API kaldet, så man ikke behøver at kalde API hver gang, måske bliver det ændret.
 ## Installation
 
 1. Klon repository'et:
